@@ -24,7 +24,9 @@ void setup() {
 }
 
 void loop() {
-    read_sensors();
+    if(current_mode == AUTO) {
+         read_sensors();
+    }
 }
 
 void read_sensors() {

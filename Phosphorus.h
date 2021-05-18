@@ -4,6 +4,8 @@
 #include "light_sensor.h"
 #include "light.h"
 
+#include "timer.h"
+
 //Lights
 #define LT_SIZE 1
 #define LT1 5
@@ -20,3 +22,4 @@
 #define BTN_AUTO 4
 
 enum mode {ON, OFF, AUTO};
+enum trigger {LOW_TRIGGER, HIGH_TRIGGER};
