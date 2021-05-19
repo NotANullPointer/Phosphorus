@@ -70,26 +70,17 @@ void process_input() {
 
 void process_mode() {
     if((current_mode == M_ON && !lights_on) || (current_mode == M_OFF && lights_on)) {
-        lights_on = !lights_on;
-        for(int i = 0; i < LT_SIZE; i++) {
-            lights[i].set_state(lights_on);
-        }
+        set_lights(!lights_on);
     } else if (current_mode = M_AUTO) {
         read_sensors();
         uint8_t average = average_sensors();
         if(current_trigger != T_NONE) {
             if(timer.check()) {
                 if(current_trigger == T_HIGH && average > SNS_THRESHOLD)
-                    current_mode = M_ON;
+                    set_lights(false);
                 else if(current_trigger == T_LOW && average <= SNS_THRESHOLD )
-                    current_mode = M_OFF;
-                else {
-                    current_trigger = T_NONE;
-                    return;
-                }
+                    set_lights(true);
                 current_trigger = T_NONE;
-                process_mode();
-                current_mode = M_AUTO;
             }
         } else {
             if(lights_on && average <= SNS_THRESHOLD) {
@@ -100,6 +91,13 @@ void process_mode() {
                 timer.start(); 
             }
         }
+    }
+}
+
+void set_lights(bool state) {
+    lights_on = state;
+    for(int i = 0; i < LT_SIZE; i++) {
+        lights[i].set_state(lights_on);
     }
 }
 
