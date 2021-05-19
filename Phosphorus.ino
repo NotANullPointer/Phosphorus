@@ -40,8 +40,6 @@ void process_input() {
     
     if(in == I_NONE)
         in = remote_input();
-    else
-        return;
         
     if(in == I_NONE)
         return;
@@ -60,7 +58,7 @@ void process_input() {
             in_mode = M_AUTO;
             break;
         case I_AVG:
-            Serial.println("Media dei sensori: " + String(average_sensors() + "%"));
+            Serial.println("Media dei sensori: " + String(average_sensors()) + "%");
             break;
     }
 
