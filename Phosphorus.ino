@@ -71,7 +71,7 @@ void process_input() {
 void process_mode() {
     if((current_mode == M_ON && !lights_on) || (current_mode == M_OFF && lights_on)) {
         set_lights(!lights_on);
-    } else if (current_mode = M_AUTO) {
+    } else if (current_mode == M_AUTO) {
         read_sensors();
         uint8_t average = average_sensors();
         if(current_trigger != T_NONE) {
