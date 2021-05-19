@@ -1,6 +1,6 @@
 #include "Phosphorus.h"
 
-mode current_mode = OFF;
+mode current_mode = AUTO;
 
 Timer timer(TG_TIME);
 
@@ -27,6 +27,11 @@ void setup() {
 void loop() {
     if(current_mode == AUTO) {
          read_sensors();
+         for(int i = 0; i < SNS_SIZE; i++) {
+            Serial.println("Sensor #" + String(i) + ": " + String(sensors[i].get_avg_reading()));
+         }
+         Serial.println();
+         delay(1000);
     }
 }
 
