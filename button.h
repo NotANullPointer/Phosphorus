@@ -1,11 +1,11 @@
 #pragma once
 
-typedef struct __button {
-    uint8_t pin;
-    bool prev;
-    bool state;
-} button;
+#include <Arduino.h>
 
-void button_init(button &btn, uint8_t pin);
-
-bool button_read(button &btn);
+class Button {
+    private:
+        uint8_t pin;
+    public:
+        Button(uint8_t pin);
+        bool read();
+};

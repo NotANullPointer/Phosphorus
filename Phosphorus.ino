@@ -2,25 +2,26 @@
 
 mode current_mode = OFF;
 
-light_sensor sensors[3];
+Timer timer(TG_TIME);
 
-button btn_on, btn_off, btn_auto;
+LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
-light lights[1];
+LightSensor sensors[SNS_SIZE] = {
+    LightSensor(SNS1),
+    LightSensor(SNS2),
+    LightSensor(SNS3) 
+};
 
+Light lights[LT_SIZE] = {
+    Light(LT1)
+};
+
+Button btn_on(BTN_ON), btn_off(BTN_OFF), btn_auto(BTN_AUTO);
 
 void setup() {
     Serial.begin(9600);
-  
-    button_init(btn_on, BTN_ON);
-    button_init(btn_off, BTN_OFF);
-    button_init(btn_auto, BTN_AUTO);
-
-    light_sensor_init(sensors[0], SNS1);
-    light_sensor_init(sensors[1], SNS2);
-    light_sensor_init(sensors[2], SNS3);
-
-    light_init(lights[0], LT1);
+    lcd.begin(16, 2);
+    display_mode(current_mode);
 }
 
 void loop() {
@@ -31,15 +32,33 @@ void loop() {
 
 void read_sensors() {
     for(int i = 0; i < SNS_SIZE; i++) {
-        uint8_t reading = light_sensor_read(sensors[i]);
-        light_sensor_add_reading(sensors[i], reading);
+        uint8_t reading = sensors[i].read();
+        sensors[i].add_reading(reading);
     }
 }
 
 uint8_t average_sensors() {
     uint16_t average = 0;
     for(int i = 0; i < SNS_SIZE; i++) {
-        average += sensors[i].avg_reading;
+        average += sensors[i].get_avg_reading();
     }
     return (uint8_t)(average/SNS_SIZE);
+}
+
+
+void display_mode(mode m) {
+    lcd.setCursor(0, 0);
+    lcd.print(" Illuminazione  ");
+    lcd.setCursor(0, 1);
+    switch(m) {
+        case ON:
+            lcd.print("       ON       ");
+            break;
+        case OFF:
+            lcd.print("       OFF      ");
+            break;
+        case AUTO:
+            lcd.print("  CREPUSCOLARE  ");
+    }
+    current_mode = m;
 }

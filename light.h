@@ -1,9 +1,11 @@
 #pragma once
 
-typedef struct __light {
-    uint8_t pin;
-} light;
+#include <Arduino.h>
 
-void light_init(light &lt, uint8_t pin);
-
-void light_set_state(light &lt, bool state);
+class Light {
+    private:
+        uint8_t pin;
+    public:
+        Light(uint8_t pin);
+        void set_state(bool state);
+};
