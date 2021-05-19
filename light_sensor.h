@@ -4,7 +4,6 @@
 #include <math.h>
 
 #define SENSOR_READINGS 4
-#define NORMALIZE_CONSTANT 14.42179f
 
 class LightSensor {
     private:
