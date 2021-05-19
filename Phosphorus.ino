@@ -1,10 +1,10 @@
 #include "Phosphorus.h"
 
-mode current_mode = OFF;
+mode current_mode = M_OFF;
 
 bool lights_on = false;
 
-trigger current_trigger = NONE;
+trigger current_trigger = T_NONE;
 
 Timer timer(TG_TIME);
 
@@ -34,32 +34,32 @@ void loop() {
 }
 
 void process_input() {
-    input in = NONE;
+    input in = I_NONE;
     mode in_mode = current_mode; 
     in = phys_input();
     
-    if(in == NONE)
+    if(in == I_NONE)
         in = remote_input();
     else
         return;
         
-    if(in == NONE)
+    if(in == I_NONE)
         return;
 
     switch(in) {
-        case ON:
+        case I_ON:
             Serial.println("Modalità: ON");
-            in_mode = ON;
+            in_mode = M_ON;
             break;
-        case OFF:
+        case I_OFF:
             Serial.println("Modalità: OFF");
-            in_mode = OFF;
+            in_mode = M_OFF;
             break;
-        case AUTO:
+        case I_AUTO:
             Serial.println("Modalità: CREPUSCOLARE");
-            in_mode = AUTO;
+            in_mode = M_AUTO;
             break;
-        case AVG:
+        case I_AVG:
             Serial.println("Media dei sensori: " + String(average_sensors() + "%"));
             break;
     }
@@ -71,34 +71,34 @@ void process_input() {
 }
 
 void process_mode() {
-    if((current_mode == ON && !lights_on) || (current_mode == OFF && lights_on)) {
-        lights_on = !lights_on
+    if((current_mode == M_ON && !lights_on) || (current_mode == M_OFF && lights_on)) {
+        lights_on = !lights_on;
         for(int i = 0; i < LT_SIZE; i++) {
             lights[i].set_state(lights_on);
         }
-    } else if (current_mode = AUTO) {
+    } else if (current_mode = M_AUTO) {
         read_sensors();
         uint8_t average = average_sensors();
-        if(trigger != NONE) {
+        if(current_trigger != T_NONE) {
             if(timer.check()) {
-                if(trigger == HIGH_TRIGGER && average > LT_THRESHOLD)
-                    current_mode = ON;
-                else if(trigger == LOW_TRIGGER && average <= LT_THRESHOLD )
-                    current_mode = OFF;
+                if(current_trigger == T_HIGH && average > SNS_THRESHOLD)
+                    current_mode = M_ON;
+                else if(current_trigger == T_LOW && average <= SNS_THRESHOLD )
+                    current_mode = M_OFF;
                 else {
-                    trigger = NONE;
+                    current_trigger = T_NONE;
                     return;
                 }
-                trigger = NONE;
+                current_trigger = T_NONE;
                 process_mode();
-                current_mode = AUTO;
+                current_mode = M_AUTO;
             }
         } else {
-            if(lights_on && average <= LT_THRESHOLD) {
-                trigger = LOW_TRIGGER;
+            if(lights_on && average <= SNS_THRESHOLD) {
+                current_trigger = T_LOW;
                 timer.start();
-            } else if (!lights_on && average > LT_THRESHOLD) {  
-                trigger = HIGH_TRIGGER;
+            } else if (!lights_on && average > SNS_THRESHOLD) {  
+                current_trigger = T_HIGH;
                 timer.start(); 
             }
         }
@@ -121,25 +121,25 @@ uint8_t average_sensors() {
 }
 
 input phys_input() {
-    input res = NONE;
+    input res = I_NONE;
     if(btn_on.read())
-        res = ON;
+        res = I_ON;
     else if(btn_off.read())
-        res = OFF;
+        res = I_OFF;
     else if(btn_auto.read())
-        res = AUTO;
+        res = I_AUTO;
     return res;
 }
 
 input remote_input() {
-    input res = NONE;
+    input res = I_NONE;
     if(Serial.available()) {
         char c = Serial.read();
         switch(c) {
-            case '+': res = ON; break;
-            case '-': res = OFF; break;
-            case '/': res = AUTO; break;
-            case ':': res = AVG; break;
+            case ON_CMD: res = I_ON; break;
+            case OFF_CMD: res = I_OFF; break;
+            case AUTO_CMD: res = I_AUTO; break;
+            case AVG_CMD: res = I_AVG; break;
         }
     }
     return res;
@@ -150,13 +150,13 @@ void display_mode(mode m) {
     lcd.print(" Illuminazione  ");
     lcd.setCursor(0, 1);
     switch(m) {
-        case ON:
+        case M_ON:
             lcd.print("       ON       ");
             break;
-        case OFF:
+        case M_OFF:
             lcd.print("       OFF      ");
             break;
-        case AUTO:
+        case M_AUTO:
             lcd.print("  CREPUSCOLARE  ");
     }
     current_mode = m;

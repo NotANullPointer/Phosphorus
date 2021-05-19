@@ -16,7 +16,6 @@
 #define SNS1 A3
 #define SNS2 A4
 #define SNS3 A5
-
 #define SNS_THRESHOLD 20
 
 //Buttons
@@ -35,6 +34,12 @@
 //Trigger time
 #define TG_TIME 10
 
-enum mode {ON, OFF, AUTO};
-enum input {ON, oFF, AUTO, AVG, NONE};
-enum trigger {LOW_TRIGGER, HIGH_TRIGGER, NONE};
+//CMDs
+#define ON_CMD '+'
+#define OFF_CMD '-'
+#define AUTO_CMD '/'
+#define AVG_CMD ':'
+
+enum mode {M_ON, M_OFF, M_AUTO};
+enum input {I_ON, I_OFF, I_AUTO, I_AVG, I_NONE};
+enum trigger {T_LOW, T_HIGH, T_NONE};
