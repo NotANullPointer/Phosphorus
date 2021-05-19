@@ -29,6 +29,6 @@ uint8_t LightSensor::get_avg_reading() {
 
 uint8_t LightSensor::read() {
     uint16_t sensor_read = analogRead(pin);
-    sensor_read = pow(NORMALIZE_CONSTANT, sensor_read);
+    sensor_read = log(sensor_read-1)*NORMALIZE_CONSTANT;
     return (uint8_t) sensor_read; 
 }
