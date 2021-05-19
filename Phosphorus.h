@@ -25,10 +25,10 @@
 //LCD
 #define LCD_RS 6
 #define LCD_EN 7
-#define LCD_D4 8
-#define LCD_D5 9
-#define LCD_D6 10
-#define LCD_D7 11
+#define LCD_D4 11
+#define LCD_D5 10
+#define LCD_D6 9
+#define LCD_D7 8
 
 //Trigger time
 #define TG_TIME 10
