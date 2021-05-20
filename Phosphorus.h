@@ -16,7 +16,8 @@
 #define SNS1 A3
 #define SNS2 A4
 #define SNS3 A5
-#define SNS_THRESHOLD 20
+#define SNS_LOW_THRESHOLD 20
+#define SNS_HIGH_THRESHOLD 60
 
 //Buttons
 #define BTN_ON 2
@@ -35,10 +36,10 @@
 #define TG_TIME 10
 
 //CMDs
-#define ON_CMD '+'
-#define OFF_CMD '-'
-#define AUTO_CMD '/'
-#define AVG_CMD ':'
+#define CMD_ON '+'
+#define CMD_OFF '-'
+#define CMD_AUTO '/'
+#define CMD_AVG ':'
 
 enum mode {M_ON, M_OFF, M_AUTO};
 enum input {I_ON, I_OFF, I_AUTO, I_AVG, I_NONE};

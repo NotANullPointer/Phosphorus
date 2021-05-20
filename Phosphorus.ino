@@ -1,25 +1,19 @@
 #include "Phosphorus.h"
 
 mode current_mode = M_OFF;
-
+trigger current_trigger = T_NONE;
+Timer timer(TG_TIME);
 bool lights_on = false;
 
-trigger current_trigger = T_NONE;
-
-Timer timer(TG_TIME);
-
 LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-
 LightSensor sensors[SNS_SIZE] = {
     LightSensor(SNS1),
     LightSensor(SNS2),
     LightSensor(SNS3) 
 };
-
 Light lights[LT_SIZE] = {
     Light(LT1)
 };
-
 Button btn_on(BTN_ON), btn_off(BTN_OFF), btn_auto(BTN_AUTO);
 
 void setup() {
@@ -64,6 +58,7 @@ void process_input() {
 
     if(in_mode != current_mode) {
         current_mode = in_mode;
+        current_trigger =  T_NONE;
         display_mode(current_mode);
     }
 }
@@ -76,17 +71,17 @@ void process_mode() {
         uint8_t average = average_sensors();
         if(current_trigger != T_NONE) {
             if(timer.check()) {
-                if(current_trigger == T_HIGH && average > SNS_THRESHOLD)
+                if(current_trigger == T_HIGH && average > SNS_HIGH_THRESHOLD)
                     set_lights(false);
-                else if(current_trigger == T_LOW && average <= SNS_THRESHOLD )
+                else if(current_trigger == T_LOW && average <= SNS_LOW_THRESHOLD)
                     set_lights(true);
                 current_trigger = T_NONE;
             }
         } else {
-            if(lights_on && average <= SNS_THRESHOLD) {
+            if(lights_on && average <= SNS_LOW_THRESHOLD) {
                 current_trigger = T_LOW;
                 timer.start();
-            } else if (!lights_on && average > SNS_THRESHOLD) {  
+            } else if (!lights_on && average > SNS_HIGH_THRESHOLD) {  
                 current_trigger = T_HIGH;
                 timer.start(); 
             }
@@ -132,10 +127,10 @@ input remote_input() {
     if(Serial.available()) {
         char c = Serial.read();
         switch(c) {
-            case ON_CMD: res = I_ON; break;
-            case OFF_CMD: res = I_OFF; break;
-            case AUTO_CMD: res = I_AUTO; break;
-            case AVG_CMD: res = I_AVG; break;
+            case CMD_ON: res = I_ON; break;
+            case CMD_OFF: res = I_OFF; break;
+            case CMD_AUTO: res = I_AUTO; break;
+            case CMD_AVG: res = I_AVG; break;
         }
     }
     return res;
